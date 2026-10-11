@@ -1,0 +1,40 @@
+
+services:
+  backend:
+    build:
+      context: ./backend-accessoires
+    container_name: phonetech-backend
+    restart: unless-stopped
+    ports:
+      - "1337:1337"
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: http://localhost:1337
+      STRAPI_INTERNAL_URL: http://backend:1337
+    volumes:
+      - ./backend-accessoires:/app
+      - /app/node_modules
+      - ./backend-accessoires/.tmp:/app/.tmp
+    networks:
+      - phonetech-network
+
+  frontend:
+    build:
+      context: ./frontend-vitrine
+    container_name: phonetech-frontend
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: http://localhost:1337
+    depends_on:
+      - backend
+    networks:
+      - phonetech-network
+
+networks:
+  phonetech-network:
+    driver: bridge
+
+
